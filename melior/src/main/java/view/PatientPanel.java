@@ -1,49 +1,40 @@
 package view;
 
+import controller.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class PatientPanel extends JPanel {
 
-    private JPanel topLeftPanel, bottomLeftPanel, leftPanel, rightPanel;
+    private JPanel patientInfoPanel, patientBookingPanel;
 
     private int width;
     private int height;
 
-    private JLabel  lblPersonNumber,lblMedicalNumber,lblFirstName,lblLastName,lblGender,lblAddress,lblZip,lblCity,lblPhone;
+    private Controller controller;
 
-    private CustomTextField  tfPersonNumber,tfMedicalNumber,tfFirstName,tfLastName,tfAddress,tfZip,tfCity,tfPhone;
 
-    private JComboBox comboGender;
-
-    private JButton buttonSubmit, buttonEdit, buttonSave;
-
-    public PatientPanel(int width, int height) {
+    public PatientPanel(int width, int height, Controller controller) {
         this.width = width;
         this.height = height;
+        this.controller = controller;
         setupPanel();
     }
 
     private void setupPanel() {
-        setPreferredSize(new Dimension(width/2, height));
+        setPreferredSize(new Dimension(width, height));
         setBorder(BorderFactory.createBevelBorder(1));
         setLayout(new BorderLayout(5,5));
 
-        initializeLabels();
-        initializeInputFields();
-        initializeButtons();
+        patientInfoPanel = new PatientInfoPanel(width, height, controller);
+        patientBookingPanel = new PatientBookingPanel(width, height, controller);
 
-        setupTopLeftPanel();
-        setupBottomLeftPanel();
-        setupLeftPanel();
-        setupRightPanel();
-
-        add(leftPanel, BorderLayout.WEST);
-        add(rightPanel, BorderLayout.EAST);
-
+        add(patientInfoPanel, BorderLayout.WEST);
+        add(patientBookingPanel, BorderLayout.EAST);
     }
 
-    private void setupTopLeftPanel() {
+    /*private void setupTopLeftPanel() {
         topLeftPanel = new JPanel();
         topLeftPanel.setPreferredSize(new Dimension(width/4-8, height/10-5));
         //topLeftPanel.setBackground(Color.BLACK);
@@ -84,42 +75,81 @@ public class PatientPanel extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
 
         c.weightx = 0.5;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(15, 0, 15, 0);
 
         c.gridx = 0;
         c.gridy = 0;
-        add(lblMedicalNumber, c);
+        bottomLeftPanel.add(lblMedicalNumber, c);
 
         c.gridx = 1;
         c.gridy = 0;
-        add(tfMedicalNumber, c);
+        bottomLeftPanel.add(tfMedicalNumber, c);
 
         c.gridx = 0;
         c.gridy = 1;
-        add(lblFirstName, c);
+        bottomLeftPanel.add(lblFirstName, c);
 
         c.gridx = 1;
         c.gridy = 1;
-        add(tfFirstName, c);
+        bottomLeftPanel.add(tfFirstName, c);
 
         c.gridx = 0;
         c.gridy = 2;
-        add(lblLastName, c);
+        bottomLeftPanel.add(lblLastName, c);
 
         c.gridx = 1;
         c.gridy = 2;
-        add(tfLastName, c);
+        bottomLeftPanel.add(tfLastName, c);
 
         c.gridx = 0;
-        c.gridy = 0;
-        add(lblMedicalNumber, c);
+        c.gridy = 3;
+        bottomLeftPanel.add(lblGender, c);
+
+        c.gridx = 1;
+        c.gridy = 3;
+        bottomLeftPanel.add(comboGender, c);
 
         c.gridx = 0;
-        c.gridy = 0;
-        add(lblMedicalNumber, c);
+        c.gridy = 4;
+        bottomLeftPanel.add(lblAddress, c);
+
+        c.gridx = 1;
+        c.gridy = 4;
+        bottomLeftPanel.add(tfAddress, c);
 
         c.gridx = 0;
-        c.gridy = 0;
-        add(lblMedicalNumber, c);
+        c.gridy = 5;
+        bottomLeftPanel.add(lblZip, c);
+
+        c.gridx = 1;
+        c.gridy = 5;
+        bottomLeftPanel.add(tfZip, c);
+
+        c.gridx = 0;
+        c.gridy = 6;
+        bottomLeftPanel.add(lblCity, c);
+
+        c.gridx = 1;
+        c.gridy = 6;
+        bottomLeftPanel.add(tfCity, c);
+
+        c.gridx = 0;
+        c.gridy = 7;
+        bottomLeftPanel.add(lblPhone, c);
+
+        c.gridx = 1;
+        c.gridy = 7;
+        bottomLeftPanel.add(tfPhone, c);
+
+        c.gridx = 0;
+        c.gridy = 8;
+        bottomLeftPanel.add(buttonEdit, c);
+
+        c.gridx = 1;
+        c.gridy = 8;
+        bottomLeftPanel.add(buttonSave, c);
+
     }
 
     private void setupLeftPanel() {
@@ -169,5 +199,5 @@ public class PatientPanel extends JPanel {
         rightPanel = new JPanel();
         rightPanel.setPreferredSize(new Dimension(width/4-5, height));
         rightPanel.setBorder(BorderFactory.createTitledBorder("Actions"));
-    }
+    }*/
 }
