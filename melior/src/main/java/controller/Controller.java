@@ -17,8 +17,8 @@ public class Controller {
 
     public String[][] getDoctorsBySpecialization(String specialization) {
         String[][] doctors = {
-                {"PoopDude69", "Dentist", "$420"},
-                {">WeedGuy<", "Apothecary", "$6969"}
+                {"John Johnsson", "Dentist", "$420"},
+                {"Sven Svensson", "Apothecary", "$365"}
         };
         return doctors;
     }

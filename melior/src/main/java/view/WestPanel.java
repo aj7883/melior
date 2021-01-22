@@ -29,7 +29,7 @@ public class WestPanel extends JPanel {
         tabbedPane.addTab("Patient", patientTab);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        JComponent adminTab = new AdminPanel();
+        JComponent adminTab = new AdminPanel(width, height, controller);
         tabbedPane.addTab("Admin", adminTab);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_2);
 
