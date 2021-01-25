@@ -18,7 +18,7 @@ public class WestPanel extends JPanel {
 
     private void setupPanel(int width, int height) {
         setPreferredSize(new Dimension(width, height));
-        setBackground(Color.BLUE);
+        //setBackground(Color.BLUE);
         setupTabs(width, height);
     }
 
@@ -33,7 +33,7 @@ public class WestPanel extends JPanel {
         tabbedPane.addTab("Admin", adminTab);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_2);
 
-        JComponent doctorTab = new DoctorPanel(width, height);
+        JComponent doctorTab = new DoctorPanel(width, height, controller);
         tabbedPane.addTab("Doctor", doctorTab);
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_3);
 

@@ -32,7 +32,7 @@ public class AdminPatientPanel extends JPanel {
     private void setupPanel() {
         setBorder(BorderFactory.createTitledBorder("Patient info"));
         setPreferredSize(new Dimension(width/2-5, height-5));
-        setBackground(Color.RED);
+        //setBackground(Color.RED);
         setLayout(new BorderLayout());
 
         setupMedicalRecordsPanel();
@@ -46,7 +46,7 @@ public class AdminPatientPanel extends JPanel {
         patientListPanel = new JPanel();
         patientListPanel.setPreferredSize(new Dimension(width/2-5, height/2-20));
         patientListPanel.setLayout(new BorderLayout());
-        patientListPanel.setBackground(Color.CYAN);
+        //patientListPanel.setBackground(Color.CYAN);
 
         String[] columns = {"Medical number", "Name", "Person number", "Address", "Phone", "Gender", "Total"};
         modelPatientList = new DefaultTableModel(columns, 50) {
@@ -71,7 +71,7 @@ public class AdminPatientPanel extends JPanel {
         medicalRecordPanel = new JPanel();
         medicalRecordPanel.setPreferredSize((new Dimension(width/2-5, height/2-5)));
         medicalRecordPanel.setLayout(new BorderLayout());
-        medicalRecordPanel.setBackground(Color.PINK);
+        //medicalRecordPanel.setBackground(Color.PINK);
 
         String[] columns = {"Diagnosis", "Description", "Drugs", "Doctor", "Date"};
         modelMedicalRecords = new DefaultTableModel(columns, 50) {

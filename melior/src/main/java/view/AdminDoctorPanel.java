@@ -1,9 +1,10 @@
 package view;
 
 import controller.Controller;
-import org.sonatype.aether.util.graph.transformer.JavaEffectiveScopeCalculator;
+
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -15,17 +16,19 @@ public class AdminDoctorPanel extends JPanel {
 
     private JPanel panelAppointments, panelSpecializations, panelCreateDoctor, panelDoctorDisplay, panelNorth;
 
-    private JButton buttonAddSpec, buttonSaveSpec;
+    private JButton buttonAddSpec, buttonSaveSpec, buttonAddDoctor, buttonDeleteDoctor;
 
-    private JLabel lblSpec, lblCost;
+    private JLabel lblSpec, lblCost, lblFullNameDoctor, lblSpecDoctor;
 
-    private JTextField tfSpec, tfCost;
+    private JTextField tfSpec, tfCost, tfFullNameDoctor;
 
-    private JTable tableNewSpecs;
+    private JTable tableNewSpecs, tableAllDoctors, tableAppointments;
 
-    private DefaultTableModel modelNewSpecs;
+    private DefaultTableModel modelNewSpecs, modelAllDoctors, modelAppointments;
 
-    private JScrollPane scrollpaneNewSpecs;
+    private JScrollPane scrollpaneNewSpecs, scrollpaneAllDoctors, scrollpaneAppointments;
+
+    private JComboBox comboBoxSpecs;
 
     public AdminDoctorPanel(int width, int height, Controller controller) {
         this.width = width;
@@ -37,7 +40,7 @@ public class AdminDoctorPanel extends JPanel {
     private void setupPanel() {
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         setPreferredSize(new Dimension(width/2-5, height-5));
-        setBackground(Color.GREEN);
+        //setBackground(Color.GREEN);
         setLayout(new BorderLayout());
 
         initializeButtons();
@@ -55,7 +58,7 @@ public class AdminDoctorPanel extends JPanel {
         panelNorth = new JPanel();
         panelNorth.setPreferredSize(new Dimension(width/2-5, height/2-10));
         panelNorth.setLayout(new BorderLayout());
-        panelNorth.setBackground(Color.BLUE);
+        //panelNorth.setBackground(Color.BLUE);
 
         setupSpecializationPanel();
         panelNorth.add(panelSpecializations, BorderLayout.WEST);
@@ -72,25 +75,76 @@ public class AdminDoctorPanel extends JPanel {
         panelAppointments = new JPanel();
         panelAppointments.setPreferredSize(new Dimension(width/2-5, height/2-20));
         panelAppointments.setLayout(new BorderLayout());
-        panelAppointments.setBackground(Color.CYAN);
+        //panelAppointments.setBackground(Color.CYAN);
         panelAppointments.setBorder(BorderFactory.createTitledBorder("Upcoming appointments"));
+
+        String[] columns = {"Date", "Patient", "Doctor"};
+        modelAppointments = new DefaultTableModel(columns, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        tableAppointments = new JTable(modelAppointments);
+        tableAppointments.setFillsViewportHeight(true);
+        tableAppointments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableAppointments.setPreferredSize(new Dimension(width/2-15, height/2-5));
+
+        scrollpaneAppointments = new JScrollPane(tableAppointments);
+        scrollpaneAppointments.setPreferredSize(new Dimension(width/2-15, height/2-5));
+
+        panelAppointments.add(scrollpaneAppointments, BorderLayout.CENTER);
+
+
     }
 
     private void setupDoctorDisplayPanel() {
         panelDoctorDisplay = new JPanel();
         panelDoctorDisplay.setPreferredSize(new Dimension(width/4-5, height/2-5));
-        panelDoctorDisplay.setLayout(new GridBagLayout());
-        panelDoctorDisplay.setBackground(Color.BLACK);
+        panelDoctorDisplay.setLayout(new BorderLayout());
+        //panelDoctorDisplay.setBackground(Color.BLACK);
+
+        String[] columns = {"Emp. nbr.", "Name", "Specialization"};
+        modelAllDoctors = new DefaultTableModel(columns, 0) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        tableAllDoctors = new JTable(modelAllDoctors);
+        tableAllDoctors.setFillsViewportHeight(true);
+        tableAllDoctors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableAllDoctors.setPreferredSize(new Dimension(width/4-15, height/4-5));
+
+        scrollpaneAllDoctors = new JScrollPane(tableAllDoctors);
+        scrollpaneAllDoctors.setPreferredSize(new Dimension(width/8-15, height/4-5));
+
+        panelDoctorDisplay.add(scrollpaneAllDoctors, BorderLayout.CENTER);
     }
 
     private void setupSpecializationPanel() {
         panelSpecializations = new JPanel();
         panelSpecializations.setPreferredSize(new Dimension(width/8-5, height/2-5));
-        panelSpecializations.setLayout(new GridBagLayout());
+        panelSpecializations.setLayout(new BorderLayout());
         panelSpecializations.setBorder(BorderFactory.createTitledBorder("Add specializations"));
-        panelSpecializations.setBackground(Color.PINK);
+        //panelSpecializations.setBackground(Color.PINK);
 
-        GridBagConstraints c = new GridBagConstraints();
+        JPanel northPanel = new JPanel();
+        northPanel.setPreferredSize(new Dimension(width/8-5, height/6-20));
+        GridLayout gl = new GridLayout(2,2, 5, 50);
+        northPanel.setLayout(gl);
+        northPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        //northPanel.setBackground(Color.MAGENTA);
+
+        northPanel.add(lblSpec);
+        northPanel.add(tfSpec);
+        northPanel.add(lblCost);
+        northPanel.add(tfCost);
+
+        JPanel southPanel = new JPanel();
+        southPanel.setPreferredSize(new Dimension(width/8-5, (height/6-5)*2));
+        //southPanel.setBackground(Color.CYAN);
+        southPanel.setLayout(new BorderLayout());
 
         String[] columns = {"Specialization", "Cost"};
         modelNewSpecs = new DefaultTableModel(columns, 0) {
@@ -107,40 +161,53 @@ public class AdminDoctorPanel extends JPanel {
         scrollpaneNewSpecs = new JScrollPane(tableNewSpecs);
         scrollpaneNewSpecs.setPreferredSize(new Dimension(width/8-15, height/4-5));
 
-        c.weightx = 0.5;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        panelSpecializations.add(lblSpec, c);
+        southPanel.add(scrollpaneNewSpecs, BorderLayout.NORTH);
+        southPanel.add(buttonAddSpec, BorderLayout.CENTER);
+        southPanel.add(buttonSaveSpec, BorderLayout.SOUTH);
 
-        c.gridx = 1;
-        c.gridy = 0;
-        c.ipadx = width/16-10;
-        panelSpecializations.add(tfSpec, c);
-
-
+        panelSpecializations.add(northPanel, BorderLayout.NORTH);
+        panelSpecializations.add(southPanel, BorderLayout.SOUTH);
     }
 
     private void setupCreateDoctorPanel() {
         panelCreateDoctor = new JPanel();
         panelCreateDoctor.setPreferredSize(new Dimension(width/8-5, height/2-5));
-        panelCreateDoctor.setLayout(new GridBagLayout());
-        panelCreateDoctor.setBorder(BorderFactory.createTitledBorder("Add doctor"));
-        panelCreateDoctor.setBackground(Color.RED);
+        panelCreateDoctor.setLayout(new GridLayout(3, 2, 5, 130));
+        panelCreateDoctor.setBorder(BorderFactory.createTitledBorder("Add/delete doctor"));
+        //panelCreateDoctor.setBackground(Color.RED);
+
+        comboBoxSpecs = new JComboBox();
+
+        panelCreateDoctor.add(lblFullNameDoctor);
+        panelCreateDoctor.add(tfFullNameDoctor);
+        panelCreateDoctor.add(lblSpecDoctor);
+        panelCreateDoctor.add(comboBoxSpecs);
+        panelCreateDoctor.add(buttonAddDoctor);
+        panelCreateDoctor.add(buttonDeleteDoctor);
+
+
     }
 
     private void initializeButtons() {
         buttonAddSpec = new JButton("Add");
+        //buttonAddSpec.setPreferredSize(new Dimension(20,20));
+        buttonSaveSpec = new JButton("Save");
+        //buttonSaveSpec.setPreferredSize(new Dimension(20,20));
+        buttonAddDoctor = new JButton("Add");
+        buttonDeleteDoctor = new JButton("Delete");
     }
 
     private void initializeLabels() {
         lblSpec = new JLabel("Specialization");
         lblCost = new JLabel("Cost");
+        lblSpecDoctor = new JLabel("Specialization");
+        lblFullNameDoctor = new JLabel("Full name");
     }
 
     private void initializeTextFields() {
         tfSpec = new JTextField();
         tfCost = new JTextField();
+        tfFullNameDoctor = new JTextField();
     }
 
 
