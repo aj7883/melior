@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class AdminDoctorPanel extends JPanel {
 
@@ -46,6 +48,8 @@ public class AdminDoctorPanel extends JPanel {
         initializeButtons();
         initializeLabels();
         initializeTextFields();
+
+        setListeners();
 
         setupNorthPanel();
         add(panelNorth, BorderLayout.NORTH);
@@ -209,6 +213,27 @@ public class AdminDoctorPanel extends JPanel {
         tfCost = new JTextField();
         tfFullNameDoctor = new JTextField();
     }
+
+    private void setListeners() {
+        ButtonListener buttonListener = new ButtonListener();
+        buttonAddSpec.addActionListener(buttonListener);
+    }
+
+    private void addSpec() {
+        String[] row = {tfSpec.getText(), tfCost.getText()};
+        modelNewSpecs.addRow(row);
+    }
+
+
+    private class ButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+
+            if(e.getSource() == buttonAddSpec) {
+                addSpec();
+            }
+        }
+    }
+
 
 
 }

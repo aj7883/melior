@@ -42,5 +42,6 @@
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-compiler-manager:2.8.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.plexus:plexus-compiler-javac:2.8.4" level="project" />
     <orderEntry type="library" name="mssql-jdbc-8.4.1.jre14" level="project" />
+    <orderEntry type="library" name="mssql-jdbc-8.4.1.jre141" level="project" />
   </component>
 </module>
