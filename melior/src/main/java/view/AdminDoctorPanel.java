@@ -9,6 +9,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminDoctorPanel extends JPanel {
 
@@ -20,9 +22,9 @@ public class AdminDoctorPanel extends JPanel {
 
     private JButton buttonAddSpec, buttonSaveSpec, buttonAddDoctor, buttonDeleteDoctor;
 
-    private JLabel lblSpec, lblCost, lblFullNameDoctor, lblSpecDoctor;
+    private JLabel lblSpec, lblCost, lblFirstNameDoctor, lblLastNameDoctor, lblPhoneDoctor, lblSpecDoctor;
 
-    private JTextField tfSpec, tfCost, tfFullNameDoctor;
+    private JTextField tfSpec, tfCost, tfFirstNameDoctor, tfLastNameDoctor, tfPhoneDoctor;
 
     private JTable tableNewSpecs, tableAllDoctors, tableAppointments;
 
@@ -56,6 +58,8 @@ public class AdminDoctorPanel extends JPanel {
 
         setupAppointmentsPanel();
         add(panelAppointments, BorderLayout.SOUTH);
+
+        updateDoctorTable(controller.getDoctors());
     }
 
     private void setupNorthPanel() {
@@ -176,14 +180,18 @@ public class AdminDoctorPanel extends JPanel {
     private void setupCreateDoctorPanel() {
         panelCreateDoctor = new JPanel();
         panelCreateDoctor.setPreferredSize(new Dimension(width/8-5, height/2-5));
-        panelCreateDoctor.setLayout(new GridLayout(3, 2, 5, 130));
+        panelCreateDoctor.setLayout(new GridLayout(5, 2, 5, 55));
         panelCreateDoctor.setBorder(BorderFactory.createTitledBorder("Add/delete doctor"));
         //panelCreateDoctor.setBackground(Color.RED);
 
-        comboBoxSpecs = new JComboBox();
+        comboBoxSpecs = new JComboBox(controller.getSpecializations());
 
-        panelCreateDoctor.add(lblFullNameDoctor);
-        panelCreateDoctor.add(tfFullNameDoctor);
+        panelCreateDoctor.add(lblFirstNameDoctor);
+        panelCreateDoctor.add(tfFirstNameDoctor);
+        panelCreateDoctor.add(lblLastNameDoctor);
+        panelCreateDoctor.add(tfLastNameDoctor);
+        panelCreateDoctor.add(lblPhoneDoctor);
+        panelCreateDoctor.add(tfPhoneDoctor);
         panelCreateDoctor.add(lblSpecDoctor);
         panelCreateDoctor.add(comboBoxSpecs);
         panelCreateDoctor.add(buttonAddDoctor);
@@ -205,23 +213,57 @@ public class AdminDoctorPanel extends JPanel {
         lblSpec = new JLabel("Specialization");
         lblCost = new JLabel("Cost");
         lblSpecDoctor = new JLabel("Specialization");
-        lblFullNameDoctor = new JLabel("Full name");
+        lblFirstNameDoctor = new JLabel("First name");
+        lblLastNameDoctor = new JLabel("Last name");
+        lblPhoneDoctor = new JLabel("Phone");
     }
 
     private void initializeTextFields() {
         tfSpec = new JTextField();
         tfCost = new JTextField();
-        tfFullNameDoctor = new JTextField();
+        tfFirstNameDoctor = new JTextField();
+        tfLastNameDoctor = new JTextField();
+        tfPhoneDoctor = new JTextField();
     }
 
     private void setListeners() {
         ButtonListener buttonListener = new ButtonListener();
         buttonAddSpec.addActionListener(buttonListener);
+        buttonAddDoctor.addActionListener(buttonListener);
+        buttonDeleteDoctor.addActionListener(buttonListener);
     }
 
     private void addSpec() {
         String[] row = {tfSpec.getText(), tfCost.getText()};
         modelNewSpecs.addRow(row);
+    }
+
+    private void addDoctor() {
+        String[] newDoctor = new String[5];
+
+        String empNumber = "004";
+
+        newDoctor[0] = empNumber;
+        newDoctor[1] = tfFirstNameDoctor.getText();
+        newDoctor[2] = tfLastNameDoctor.getText();
+        newDoctor[3] = comboBoxSpecs.getSelectedItem().toString();
+        newDoctor[4] = tfPhoneDoctor.getText();
+
+        controller.addDoctor(newDoctor);
+    }
+
+    private void updateDoctorTable(List<Object[]> doctorData) {
+        int rows = modelAllDoctors.getRowCount();
+
+        while(rows > 0) {
+            modelAllDoctors.removeRow(0);
+            rows = modelAllDoctors.getRowCount();
+        }
+
+        for(int i = 0; i<doctorData.size(); i++) {
+            modelAllDoctors.addRow(doctorData.get(i));
+        }
+
     }
 
 
@@ -230,6 +272,25 @@ public class AdminDoctorPanel extends JPanel {
 
             if(e.getSource() == buttonAddSpec) {
                 addSpec();
+            }
+            if(e.getSource() == buttonAddDoctor) {
+                if(tfFirstNameDoctor.getText().length() < 1 | tfLastNameDoctor.getText().length() < 1 | tfPhoneDoctor.getText().length() < 1) {
+                    JOptionPane.showMessageDialog(null, "Please fill out all fields");
+                }
+                else {
+                    addDoctor();
+                    updateDoctorTable(controller.getDoctors());
+                }
+            }
+            if(e.getSource() == buttonDeleteDoctor) {
+                if(tableAllDoctors.getSelectionModel().isSelectionEmpty() == true) {
+                    JOptionPane.showMessageDialog(null, "Please select doctor to delete");
+                }
+                else {
+                    int selectedRow = tableAllDoctors.getSelectedRow();
+                    controller.deleteDoctor((String)tableAllDoctors.getValueAt(selectedRow, 0));
+                    updateDoctorTable(controller.getDoctors());
+                }
             }
         }
     }

@@ -61,6 +61,7 @@ public class PatientBookingPanel extends JPanel {
 
         buttonSelect = new JButton("Select");
         buttonSelect.addActionListener(new ButtonListener());
+
         comboSpecializations = new JComboBox(controller.getSpecializations());
 
         c.gridy = 0;

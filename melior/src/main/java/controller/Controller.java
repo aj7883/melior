@@ -1,19 +1,27 @@
 package controller;
 
+import connection.SQLConnector;
 import view.MainFrame;
+
+import javax.swing.table.DefaultTableModel;
+import java.net.UnknownHostException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
     MainFrame mainFrame;
+    SQLConnector sqlConnector = new SQLConnector();
 
     public Controller() {
         mainFrame = new MainFrame(1280, 720, this);
     }
 
-    public String[] getSpecializations() {
-        String[] specializations = {"Dentist", "GP", "Surgeon"};
-        return specializations;
-    }
+//    public String[] getSpecializations() {
+//        String[] specializations = {"Dentist", "GP", "Surgeon"};
+//        return specializations;
+//    }
 
     public String[][] getDoctorsBySpecialization(String specialization) {
         String[][] doctors = {
@@ -21,6 +29,42 @@ public class Controller {
                 {"Sven Svensson", "Apothecary", "$365"}
         };
         return doctors;
+    }
+
+    public List<Object[]> getDoctors() {
+        List<Object[]> allDoctors = new ArrayList<>();
+        try {
+            allDoctors = sqlConnector.getDoctors();
+        }catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return allDoctors;
+    }
+
+    public void addDoctor(String[] doctor) {
+        try {
+            sqlConnector.addDoctor(doctor);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDoctor(String empNbr) {
+        try {
+            sqlConnector.deleteDoctor(empNbr);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Object[] getSpecializations() {
+        try {
+            Object[] specs = sqlConnector.getProcedures();
+            return specs;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

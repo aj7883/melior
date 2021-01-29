@@ -17,7 +17,7 @@
   </component>
   <component name="ProjectId" id="1mW0XmTVn2b1yWrjgE7ClDGHqbb" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/javasql/sqljdbc_8.4/enu/mssql-jdbc-8.4.1.jre14.jar!/" />
+    <property name="last_opened_file_path" value="D:/Downloads/sqljdbc_8.4.1.0_enu/sqljdbc_8.4/enu/mssql-jdbc-8.4.1.jre14.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -61,9 +61,23 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="SQLConnector" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="connection.SQLConnector" />
+      <module name="melior" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="connection.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
+        <item itemvalue="Application.SQLConnector" />
         <item itemvalue="Application.MainFrame" />
       </list>
     </recent_temporary>
