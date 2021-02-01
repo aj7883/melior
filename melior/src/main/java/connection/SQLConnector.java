@@ -119,16 +119,37 @@ public class SQLConnector {
         statement.execute();
     }
 
+    public void addSpecs(List<Object[]> data) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.add_procedure ?,?";
+
+        for(int i = 0; i<data.size(); i++) {
+            PreparedStatement statement = connection.prepareStatement(execProcedure);
+            Object[] row = data.get(i);
+            statement.setString(1, (String)row[0]);
+            statement.setString(2, (String)row[1]);
+            statement.execute();
+        }
+    }
+
     public static void main(String[] args) {
         SQLConnector sqlConnector = new SQLConnector();
 
-//        try {
-//
-//            String empNbr = "004";
-//            sqlConnector.deleteDoctor(empNbr);
-//
-//        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        List<Object[]> test = new ArrayList<>();
+
+        Object[] dataOne = {"Foot doctor", "100"};
+        Object[] dataTwo = {"Cardiologist", "300"};
+
+        test.add(dataOne);
+        test.add(dataTwo);
+
+
+        try {
+            sqlConnector.addSpecs(test);
+
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

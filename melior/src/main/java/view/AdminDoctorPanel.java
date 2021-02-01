@@ -231,6 +231,7 @@ public class AdminDoctorPanel extends JPanel {
         buttonAddSpec.addActionListener(buttonListener);
         buttonAddDoctor.addActionListener(buttonListener);
         buttonDeleteDoctor.addActionListener(buttonListener);
+        buttonSaveSpec.addActionListener(buttonListener);
     }
 
     private void addSpec() {
@@ -241,7 +242,7 @@ public class AdminDoctorPanel extends JPanel {
     private void addDoctor() {
         String[] newDoctor = new String[5];
 
-        String empNumber = "004";
+        String empNumber = "001";
 
         newDoctor[0] = empNumber;
         newDoctor[1] = tfFirstNameDoctor.getText();
@@ -250,6 +251,25 @@ public class AdminDoctorPanel extends JPanel {
         newDoctor[4] = tfPhoneDoctor.getText();
 
         controller.addDoctor(newDoctor);
+    }
+
+    private void addSpecs() {
+        List<Object[]> specializations = new ArrayList<>();
+
+        int rows = modelNewSpecs.getRowCount();
+
+        while(rows > 0) {
+            Object[] newRow = new Object[2];
+            newRow[0] = tableNewSpecs.getValueAt(0,0);
+            newRow[1] = tableNewSpecs.getValueAt(0,1);
+            specializations.add(newRow);
+            modelNewSpecs.removeRow(0);
+            rows = modelNewSpecs.getRowCount();
+        }
+
+        controller.addSpec(specializations);
+        comboBoxSpecs.setModel(new DefaultComboBoxModel(controller.getSpecializations()));
+
     }
 
     private void updateDoctorTable(List<Object[]> doctorData) {
@@ -291,6 +311,9 @@ public class AdminDoctorPanel extends JPanel {
                     controller.deleteDoctor((String)tableAllDoctors.getValueAt(selectedRow, 0));
                     updateDoctorTable(controller.getDoctors());
                 }
+            }
+            if(e.getSource() == buttonSaveSpec) {
+                addSpecs();
             }
         }
     }

@@ -31,6 +31,14 @@ public class Controller {
         return doctors;
     }
 
+    public void addSpec(List<Object[]> data) {
+        try {
+            sqlConnector.addSpecs(data);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<Object[]> getDoctors() {
         List<Object[]> allDoctors = new ArrayList<>();
         try {
