@@ -9,8 +9,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class AdminDoctorPanel extends JPanel {
 
@@ -34,11 +36,42 @@ public class AdminDoctorPanel extends JPanel {
 
     private JComboBox comboBoxSpecs;
 
+    private int currentEmpNbr;
+
     public AdminDoctorPanel(int width, int height, Controller controller) {
         this.width = width;
         this.height = height;
         this.controller = controller;
+        getCurrentEmpNbr();
+        System.out.println(currentEmpNbr);
         setupPanel();
+    }
+
+    private void getCurrentEmpNbr() {
+
+        try {
+            FileInputStream fis = new FileInputStream("files/empNbr.txt");
+            DataInputStream dis = new DataInputStream(fis);
+
+            currentEmpNbr = dis.readInt();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void saveCurrentEmpNbr() {
+        try {
+            FileOutputStream fos = new FileOutputStream("files/empNbr.txt");
+            DataOutputStream dos = new DataOutputStream(fos);
+
+            dos.writeInt(currentEmpNbr);
+            dos.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void setupPanel() {
@@ -241,8 +274,21 @@ public class AdminDoctorPanel extends JPanel {
 
     private void addDoctor() {
         String[] newDoctor = new String[5];
+        String empNumber;
+        if(currentEmpNbr < 10) {
+            empNumber = "00" + currentEmpNbr;
+            currentEmpNbr++;
+        }
+        else if(currentEmpNbr >= 10 && currentEmpNbr < 100) {
+            empNumber = "0" + currentEmpNbr;
+            currentEmpNbr++;
+        }
+        else {
+            empNumber = "" + currentEmpNbr;
+            currentEmpNbr++;
+        }
 
-        String empNumber = "001";
+        saveCurrentEmpNbr();
 
         newDoctor[0] = empNumber;
         newDoctor[1] = tfFirstNameDoctor.getText();
@@ -251,6 +297,7 @@ public class AdminDoctorPanel extends JPanel {
         newDoctor[4] = tfPhoneDoctor.getText();
 
         controller.addDoctor(newDoctor);
+
     }
 
     private void addSpecs() {

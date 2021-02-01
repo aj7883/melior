@@ -3,7 +3,11 @@ package view;
 import controller.Controller;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 
 public class PatientInfoPanel extends JPanel {
 
@@ -16,16 +20,42 @@ public class PatientInfoPanel extends JPanel {
 
     private JComboBox comboGender;
 
-    private JButton buttonSubmit, buttonEdit, buttonSave;
+    private JButton buttonSubmit, buttonEdit, buttonSave, buttonAdd;
 
     private Controller controller;
+
+    private int currentMedicalNumber;
 
 
     public PatientInfoPanel(int width, int height, Controller controller) {
         this.width = width;
         this.height = height;
         this.controller = controller;
+        getCurrentMedicalNumber();
         setupPanel();
+    }
+
+    private void getCurrentMedicalNumber() {
+        try {
+            FileInputStream fis = new FileInputStream("files/medNbr.txt");
+            DataInputStream dis = new DataInputStream(fis);
+
+            currentMedicalNumber = dis.readInt();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveCurrentMedicalNumber() {
+        try {
+            FileOutputStream fos = new FileOutputStream("files/medNbr.txt");
+            DataOutputStream dos = new DataOutputStream(fos);
+
+            dos.writeInt(currentMedicalNumber);
+            dos.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupPanel() {
@@ -42,6 +72,8 @@ public class PatientInfoPanel extends JPanel {
 
         add(topLeftPanel, BorderLayout.NORTH);
         add(bottomLeftPanel, BorderLayout.SOUTH);
+
+        addListeners();
     }
 
     private void setupTopLeftPanel() {
@@ -152,13 +184,13 @@ public class PatientInfoPanel extends JPanel {
         c.gridy = 7;
         bottomLeftPanel.add(tfPhone, c);
 
-        c.gridx = 0;
-        c.gridy = 8;
-        bottomLeftPanel.add(lblRegDate, c);
-
-        c.gridx = 1;
-        c.gridy = 8;
-        bottomLeftPanel.add(tfRegDate, c);
+//        c.gridx = 0;
+//        c.gridy = 8;
+//        bottomLeftPanel.add(lblRegDate, c);
+//
+//        c.gridx = 1;
+//        c.gridy = 8;
+//        bottomLeftPanel.add(tfRegDate, c);
 
         c.gridx = 0;
         c.gridy = 9;
@@ -168,8 +200,9 @@ public class PatientInfoPanel extends JPanel {
         c.gridy = 9;
         bottomLeftPanel.add(buttonSave, c);
 
-
-
+        c.gridx = 2;
+        c.gridy = 9;
+        bottomLeftPanel.add(buttonAdd, c);
 
     }
 
@@ -216,7 +249,130 @@ public class PatientInfoPanel extends JPanel {
         buttonEdit.setEnabled(false);
         buttonSave = new JButton("Save");
         buttonSave.setEnabled(false);
+        buttonAdd = new JButton("Add");
+        buttonAdd.setEnabled(false);
     }
 
+    private void addListeners() {
+        ButtonListener buttonListener = new ButtonListener();
+        buttonSubmit.addActionListener(buttonListener);
+        buttonEdit.addActionListener(buttonListener);
+        buttonSave.addActionListener(buttonListener);
+        buttonAdd.addActionListener(buttonListener);
+    }
+
+    private void getPatient() {
+        if(tfPersonNumber.getText().length() != 10) {
+            JOptionPane.showMessageDialog(null, "Please enter person number with 10 characters");
+        }
+        else {
+            String[] patientInfo = controller.getPatient(tfPersonNumber.getText());
+
+            if(patientInfo == null) {
+                tfPersonNumber.setEditable(false);
+                JOptionPane.showMessageDialog(null, "No patient found with that person number, please add info in all fields and save it to create a new patient");
+                tfFirstName.setEditable(true);
+                tfLastName.setEditable(true);
+                tfAddress.setEditable(true);
+                tfZip.setEditable(true);
+                tfCity.setEditable(true);
+                tfPhone.setEditable(true);
+                buttonAdd.setEnabled(true);
+
+                String medicalNumber;
+                if(currentMedicalNumber < 10) {
+                    medicalNumber = "00" + currentMedicalNumber;
+                }
+                else if(currentMedicalNumber >= 10 && currentMedicalNumber < 100) {
+                    medicalNumber = "0" + currentMedicalNumber;
+                }
+                else {
+                    medicalNumber = "" + currentMedicalNumber;
+                }
+
+                tfMedicalNumber.setText(medicalNumber);
+            }
+            else {
+                tfPersonNumber.setEditable(false);
+                tfMedicalNumber.setText(patientInfo[0]);
+                tfFirstName.setText(patientInfo[2]);
+                tfLastName.setText(patientInfo[3]);
+                tfPhone.setText(patientInfo[4]);
+
+                String[] address = patientInfo[5].split(",");
+
+                tfAddress.setText(address[0]);
+                tfZip.setText(address[1]);
+                tfCity.setText(address[2]);
+                buttonEdit.setEnabled(true);
+                buttonSave.setEnabled(true);
+            }
+        }
+
+    }
+
+    private void addPatient() {
+        String[] patientInfo = new String[6];
+
+        patientInfo[0] = tfMedicalNumber.getText();
+        patientInfo[1] = tfPersonNumber.getText();
+        patientInfo[2] = tfFirstName.getText();
+        patientInfo[3] = tfLastName.getText();
+        patientInfo[4] = tfPhone.getText();
+        patientInfo[5] = tfAddress.getText() + "," + tfZip.getText() + "," + tfCity.getText();
+
+        controller.addPatient(patientInfo);
+
+        currentMedicalNumber++;
+        saveCurrentMedicalNumber();
+    }
+
+
+    private boolean textFieldsValid() {
+        boolean validTextFields = true;
+
+        if(tfFirstName.getText().isEmpty()) {
+            validTextFields = false;
+            tfFirstName.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfLastName.getText().isEmpty()) {
+            validTextFields = false;
+            tfLastName.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfAddress.getText().isEmpty()) {
+            validTextFields = false;
+            tfAddress.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfZip.getText().isEmpty()) {
+            validTextFields = false;
+            tfZip.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfCity.getText().isEmpty()) {
+            validTextFields = false;
+            tfCity.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfPhone.getText().isEmpty()) {
+            validTextFields = false;
+            tfPhone.setBorder(new LineBorder(Color.RED));
+        }
+        return validTextFields;
+    }
+
+    private class ButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == buttonSubmit) {
+                getPatient();
+            }
+            if(e.getSource() == buttonAdd) {
+                if(!textFieldsValid()) {
+                    JOptionPane.showMessageDialog(null, "Please fill in marked fields");
+                }
+                else {
+                    addPatient();
+                }
+            }
+        }
+
+    }
 
 }

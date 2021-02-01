@@ -75,5 +75,23 @@ public class Controller {
         return null;
     }
 
+    public void addPatient(String[] newPatientInfo) {
+        try {
+            sqlConnector.addPatient(newPatientInfo);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String[] getPatient(String personNumber) {
+        try {
+            String[] patientInfo = sqlConnector.getPatient(personNumber);
+            return patientInfo;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

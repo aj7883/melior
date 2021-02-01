@@ -108,6 +108,30 @@ public class SQLConnector {
         return data;
     }
 
+    public List<Object[]> getDoctorsBySpec(String specialization) throws SQLException, UnknownHostException, ClassNotFoundException{
+        Connection connection = connect();
+        List<Object[]> data = new ArrayList<>();
+        String execProcedure = "exec Health_Center.dbo.get_employee_procedure ?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+        statement.setString(1, specialization);
+
+        ResultSet resultSet = statement.executeQuery();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+
+        int columnCount = metaData.getColumnCount();
+
+        while(resultSet.next()) {
+            Object[] row = new Object[columnCount];
+            for(int i = 0; i<columnCount; i++) {
+                row[i] = resultSet.getObject(i + 1);
+            }
+            data.add(row);
+        }
+
+        return data;
+    }
+
     public void deleteDoctor(String empNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
         Connection connection = connect();
 
@@ -133,20 +157,74 @@ public class SQLConnector {
         }
     }
 
+    public String[] getPatient(String personNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_patient_person_id ?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+        statement.setString(1, personNbr);
+
+        ResultSet resultSet = statement.executeQuery();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        if(resultSet.next() == false) {
+            return null;
+        }
+
+        String[] patientResult = new String[metaData.getColumnCount()];
+
+        for(int i = 0; i<patientResult.length; i++) {
+
+            patientResult[i] = resultSet.getString(i+1);
+
+        }
+
+        return patientResult;
+    }
+
+    public void addPatient(String[] patientInfo) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.insert_patient ?,?,?,?,?,?,?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+
+        statement.setString(1, patientInfo[0]);
+        statement.setString(2, patientInfo[1]);
+        statement.setString(3, patientInfo[2]);
+        statement.setString(4, patientInfo[3]);
+        statement.setString(5, patientInfo[4]);
+        statement.setString(6, patientInfo[5]);
+
+        java.util.Date today = new java.util.Date();
+        java.sql.Date timestamp = new java.sql.Date(today.getTime());
+
+        statement.setDate(7, timestamp);
+
+        statement.execute();
+    }
+
     public static void main(String[] args) {
         SQLConnector sqlConnector = new SQLConnector();
 
-        List<Object[]> test = new ArrayList<>();
-
-        Object[] dataOne = {"Foot doctor", "100"};
-        Object[] dataTwo = {"Cardiologist", "300"};
-
-        test.add(dataOne);
-        test.add(dataTwo);
-
+//        try {
+//            String[] patientInfo = {"001", "8907134012", "Andreas", "Månsson", "0736423533", "Sturegatan 9D,211 50,Malmö"};
+//            sqlConnector.addPatient(patientInfo);
+//        }catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         try {
-            sqlConnector.addSpecs(test);
+            String[] patientResult = sqlConnector.getPatient("8907134012");
+            if(patientResult != null) {
+                for(int i = 0; i<patientResult.length; i++) {
+                    System.out.println(patientResult[i]);
+                }
+            }
+            else {
+                System.out.println("Patient doesn't exist");
+            }
+
 
         } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
             e.printStackTrace();
