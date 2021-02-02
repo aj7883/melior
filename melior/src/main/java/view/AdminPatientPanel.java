@@ -4,8 +4,11 @@ import controller.Controller;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class AdminPatientPanel extends JPanel {
 
@@ -40,6 +43,8 @@ public class AdminPatientPanel extends JPanel {
 
         add(patientListPanel, BorderLayout.NORTH);
         add(medicalRecordPanel, BorderLayout.SOUTH);
+
+        updatePatientTable(controller.getAllPatients());
     }
 
     private void setupPatientListPanel() {
@@ -64,6 +69,8 @@ public class AdminPatientPanel extends JPanel {
         scrollpanePatients.setPreferredSize(new Dimension(width/2-10, height/2-40));
 
         patientListPanel.add(scrollpanePatients, BorderLayout.CENTER);
+
+        tablePatients.getSelectionModel().addListSelectionListener(new PatientListListener());
 
     }
 
@@ -90,5 +97,44 @@ public class AdminPatientPanel extends JPanel {
 
         medicalRecordPanel.add(scrollpaneMedicalRecords, BorderLayout.SOUTH);
 
+    }
+
+    private void updatePatientTable(List<Object[]> allPatients) {
+        int rows = modelPatientList.getRowCount();
+
+        while(rows > 0) {
+            modelPatientList.removeRow(0);
+            rows = modelPatientList.getRowCount();
+        }
+
+        for(int i = 0; i<allPatients.size(); i++) {
+            modelPatientList.addRow(allPatients.get(i));
+        }
+    }
+
+    private void updateMedicalRecordsTable(List<Object[]> medicalRecords) {
+        int rows = modelMedicalRecords.getRowCount();
+
+        while(rows > 0) {
+            modelMedicalRecords.removeRow(0);
+            rows = modelMedicalRecords.getRowCount();
+        }
+
+        for(int i = 0; i<medicalRecords.size(); i++) {
+            modelMedicalRecords.addRow(medicalRecords.get(i));
+        }
+    }
+
+    private void getMedicalRecords(String medicalNumber) {
+        List<Object[]> medicalRecords = controller.getMedicalRecords(medicalNumber);
+        updateMedicalRecordsTable(medicalRecords);
+    }
+
+    private class PatientListListener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent e) {
+            int selectedRow = tablePatients.getSelectedRow();
+
+            getMedicalRecords((String)modelPatientList.getValueAt(selectedRow, 0));
+        }
     }
 }

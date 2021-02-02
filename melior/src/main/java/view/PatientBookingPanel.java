@@ -8,6 +8,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class PatientBookingPanel extends JPanel {
 
@@ -26,6 +27,7 @@ public class PatientBookingPanel extends JPanel {
     private int width, height;
 
     private Controller controller;
+
 
     public PatientBookingPanel(int width, int height, Controller controller) {
         this.width = width;
@@ -61,6 +63,7 @@ public class PatientBookingPanel extends JPanel {
 
         buttonSelect = new JButton("Select");
         buttonSelect.addActionListener(new ButtonListener());
+        buttonSelect.setEnabled(false);
 
         comboSpecializations = new JComboBox(controller.getSpecializations());
 
@@ -131,6 +134,10 @@ public class PatientBookingPanel extends JPanel {
 
     }
 
+    public void enableSelection() {
+        buttonSelect.setEnabled(true);
+    }
+
     public void deleteRowsSelection() {
         int rows = tableModelSelection.getRowCount();
 
@@ -140,11 +147,11 @@ public class PatientBookingPanel extends JPanel {
         }
     }
 
-    public void updateListSelection(String[][] data) {
+    public void updateListSelection(List<Object[]> doctors) {
         deleteRowsSelection();
 
-        for(int row = 0; row<data.length; row++) {
-            tableModelSelection.addRow(data[row]);
+        for(int row = 0; row<doctors.size(); row++) {
+            tableModelSelection.addRow(doctors.get(row));
         }
     }
 
@@ -170,7 +177,7 @@ public class PatientBookingPanel extends JPanel {
     public class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == buttonSelect) {
-                updateListSelection(controller.getDoctorsBySpecialization("Doctor"));
+                updateListSelection(controller.getDoctorsBySpecialization((String)comboSpecializations.getSelectedItem()));
             }
         }
     }

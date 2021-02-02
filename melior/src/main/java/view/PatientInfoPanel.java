@@ -26,11 +26,14 @@ public class PatientInfoPanel extends JPanel {
 
     private int currentMedicalNumber;
 
+    private PatientPanel patientPanel;
 
-    public PatientInfoPanel(int width, int height, Controller controller) {
+
+    public PatientInfoPanel(int width, int height, Controller controller, PatientPanel patientPanel) {
         this.width = width;
         this.height = height;
         this.controller = controller;
+        this.patientPanel = patientPanel;
         getCurrentMedicalNumber();
         setupPanel();
     }
@@ -306,6 +309,8 @@ public class PatientInfoPanel extends JPanel {
                 tfCity.setText(address[2]);
                 buttonEdit.setEnabled(true);
                 buttonSave.setEnabled(true);
+
+                patientPanel.enableSelectionBooking();
             }
         }
 
@@ -325,6 +330,20 @@ public class PatientInfoPanel extends JPanel {
 
         currentMedicalNumber++;
         saveCurrentMedicalNumber();
+
+        buttonEdit.setEnabled(true);
+        buttonSave.setEnabled(true);
+
+        tfPersonNumber.setEditable(false);
+        tfFirstName.setEditable(false);
+        tfLastName.setEditable(false);
+        tfAddress.setEditable(false);
+        tfZip.setEditable(false);
+        tfCity.setEditable(false);
+        tfPhone.setEditable(false);
+        buttonAdd.setEnabled(false);
+
+        patientPanel.enableSelectionBooking();
     }
 
 

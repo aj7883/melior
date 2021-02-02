@@ -7,7 +7,8 @@ import java.awt.*;
 
 public class PatientPanel extends JPanel {
 
-    private JPanel patientInfoPanel, patientBookingPanel;
+    private PatientInfoPanel patientInfoPanel;
+    private PatientBookingPanel patientBookingPanel;
 
     private int width;
     private int height;
@@ -27,11 +28,17 @@ public class PatientPanel extends JPanel {
         setBorder(BorderFactory.createBevelBorder(1));
         setLayout(new BorderLayout(5,5));
 
-        patientInfoPanel = new PatientInfoPanel(width, height, controller);
+        patientInfoPanel = new PatientInfoPanel(width, height, controller, this);
         patientBookingPanel = new PatientBookingPanel(width, height, controller);
 
         add(patientInfoPanel, BorderLayout.WEST);
         add(patientBookingPanel, BorderLayout.EAST);
+
+
+    }
+
+    public void enableSelectionBooking() {
+        patientBookingPanel.enableSelection();
     }
 
     /*private void setupTopLeftPanel() {

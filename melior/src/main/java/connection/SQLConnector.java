@@ -117,15 +117,20 @@ public class SQLConnector {
         statement.setString(1, specialization);
 
         ResultSet resultSet = statement.executeQuery();
-        ResultSetMetaData metaData = resultSet.getMetaData();
 
-        int columnCount = metaData.getColumnCount();
+        execProcedure = "SELECT * FROM Health_Center.dbo.summary_procedures WHERE procedure_type='" + specialization + "';";
+        Statement statementCost = connection.createStatement();
+        ResultSet resultSetCost = statementCost.executeQuery(execProcedure);
+        resultSetCost.next();
 
+        String cost = resultSetCost.getString(2);
+        String fullName;
         while(resultSet.next()) {
-            Object[] row = new Object[columnCount];
-            for(int i = 0; i<columnCount; i++) {
-                row[i] = resultSet.getObject(i + 1);
-            }
+            Object[] row = new Object[3];
+            fullName = resultSet.getString(2) + " " + resultSet.getString(3);
+            row[0] = fullName;
+            row[1] = specialization;
+            row[2] = cost;
             data.add(row);
         }
 
@@ -204,30 +209,69 @@ public class SQLConnector {
         statement.execute();
     }
 
+    public List<Object[]> getAllPatients() throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_all_patients";
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(execProcedure);
+
+        List<Object[]> data = new ArrayList<>();
+
+        while(resultSet.next()) {
+            Object[] row = new Object[7];
+            row[0] = resultSet.getString(1);
+            row[1] = resultSet.getString(3) + " " + resultSet.getString(4);
+            row[2] = resultSet.getString(2);
+            row[3] = resultSet.getString(6);
+            row[4] = resultSet.getString(5);
+            row[5] = "Gender placeholder";
+            row[6] = "Total placeholder";
+            data.add(row);
+        }
+
+        return data;
+    }
+
+    public List<Object[]> getMedicalRecords(String medicalID) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_medical_record ?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+        statement.setString(1, medicalID);
+        ResultSet resultSet = statement.executeQuery();
+
+        List<Object[]> data = new ArrayList<>();
+
+        while(resultSet.next()) {
+            Object[] row = new Object[5];
+
+            row[0] = resultSet.getString(2);
+            row[1] = resultSet.getString(3);
+            row[2] = resultSet.getString(4);
+            row[3] = resultSet.getString(6);
+            row[4] = "Date placeholder";
+        }
+
+        return data;
+    }
+
     public static void main(String[] args) {
         SQLConnector sqlConnector = new SQLConnector();
-
+//        List<Object[]> data = new ArrayList<>();
 //        try {
-//            String[] patientInfo = {"001", "8907134012", "Andreas", "Månsson", "0736423533", "Sturegatan 9D,211 50,Malmö"};
-//            sqlConnector.addPatient(patientInfo);
-//        }catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+//            data = sqlConnector.getAllPatients();
+//        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
 //            e.printStackTrace();
 //        }
-
-        try {
-            String[] patientResult = sqlConnector.getPatient("8907134012");
-            if(patientResult != null) {
-                for(int i = 0; i<patientResult.length; i++) {
-                    System.out.println(patientResult[i]);
-                }
-            }
-            else {
-                System.out.println("Patient doesn't exist");
-            }
-
-
-        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        System.out.println(data.size());
+//        for(int i = 0; i<data.size(); i++) {
+//            Object[] row = data.get(i);
+//            for(int j = 0; j<row.length; j++) {
+//                System.out.println(row[j]);
+//            }
+//        }
     }
 }

@@ -18,17 +18,34 @@ public class Controller {
         mainFrame = new MainFrame(1280, 720, this);
     }
 
-//    public String[] getSpecializations() {
-//        String[] specializations = {"Dentist", "GP", "Surgeon"};
-//        return specializations;
-//    }
+    public List<Object[]> getMedicalRecords(String medicalID) {
+        List<Object[]> medicalRecords = new ArrayList<>();
+        try {
+            medicalRecords = sqlConnector.getMedicalRecords(medicalID);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return medicalRecords;
+    }
 
-    public String[][] getDoctorsBySpecialization(String specialization) {
-        String[][] doctors = {
-                {"John Johnsson", "Dentist", "$420"},
-                {"Sven Svensson", "Apothecary", "$365"}
-        };
-        return doctors;
+    public List<Object[]> getAllPatients() {
+        List<Object[]> allPatients = new ArrayList<>();
+        try {
+            allPatients = sqlConnector.getAllPatients();
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return allPatients;
+    }
+
+    public List<Object[]> getDoctorsBySpecialization(String specialization) {
+        List<Object[]> doctorsBySpec = new ArrayList<>();
+        try {
+            doctorsBySpec = sqlConnector.getDoctorsBySpec(specialization);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return doctorsBySpec;
     }
 
     public void addSpec(List<Object[]> data) {
