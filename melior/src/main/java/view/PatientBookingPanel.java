@@ -3,6 +3,8 @@ package view;
 import controller.Controller;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
@@ -84,7 +86,7 @@ public class PatientBookingPanel extends JPanel {
         listPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         listPanel.setLayout(new BorderLayout());
 
-        String[] columnNames = {"Doctor", "Specialization", "Price"};
+        String[] columnNames = {"Employee nbr", "Doctor", "Specialization", "Price"};
         tableModelSelection = new DefaultTableModel(columnNames, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -98,7 +100,9 @@ public class PatientBookingPanel extends JPanel {
         scrollPane = new JScrollPane(listDoctors);
         scrollPane.setPreferredSize(new Dimension((width-width/4)/2-20, height/2 - 20));
 
+        listDoctors.getSelectionModel().addListSelectionListener(new DoctorListListener());
         listPanel.add(scrollPane, BorderLayout.CENTER);
+
     }
 
     private void setupBookingPanel() {
@@ -172,13 +176,26 @@ public class PatientBookingPanel extends JPanel {
         }
     }
 
+    private void getAvailability(String empNbr) {
+        System.out.println("Test");
+        //controller.getAvailability(empNbr);
+    }
 
 
-    public class ButtonListener implements ActionListener {
+    private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == buttonSelect) {
                 updateListSelection(controller.getDoctorsBySpecialization((String)comboSpecializations.getSelectedItem()));
             }
+        }
+    }
+
+    private class DoctorListListener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent e) {
+            int selectedRow = listDoctors.getSelectedRow();
+
+            getAvailability((String)tableModelSelection.getValueAt(selectedRow, 0));
+
         }
     }
 }

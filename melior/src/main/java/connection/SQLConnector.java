@@ -126,15 +126,35 @@ public class SQLConnector {
         String cost = resultSetCost.getString(2);
         String fullName;
         while(resultSet.next()) {
-            Object[] row = new Object[3];
+            Object[] row = new Object[4];
             fullName = resultSet.getString(2) + " " + resultSet.getString(3);
-            row[0] = fullName;
-            row[1] = specialization;
-            row[2] = cost;
+            row[0] = resultSet.getString(1);
+            row[1] = fullName;
+            row[2] = specialization;
+            row[3] = cost;
             data.add(row);
         }
 
         return data;
+    }
+
+    public Object[] getDoctorByEmpNbr(String empNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "SELECT * FROM Health_Center.dbo.employee WHERE employee_id='" + empNbr + "';";
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(execProcedure);
+
+        if(resultSet.next() == false) {
+            return null;
+        }
+
+        Object[] employeeData = new Object[2];
+        employeeData[0] = resultSet.getString(1);
+        employeeData[1] = resultSet.getString(2) + " " + resultSet.getString(3);
+
+        return employeeData;
     }
 
     public void deleteDoctor(String empNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
@@ -190,7 +210,7 @@ public class SQLConnector {
     public void addPatient(String[] patientInfo) throws SQLException, UnknownHostException, ClassNotFoundException {
         Connection connection = connect();
 
-        String execProcedure = "exec Health_Center.dbo.insert_patient ?,?,?,?,?,?,?";
+        String execProcedure = "exec Health_Center.dbo.insert_patient ?,?,?,?,?,?,?,?";
 
         PreparedStatement statement = connection.prepareStatement(execProcedure);
 
@@ -200,11 +220,29 @@ public class SQLConnector {
         statement.setString(4, patientInfo[3]);
         statement.setString(5, patientInfo[4]);
         statement.setString(6, patientInfo[5]);
+        statement.setString(8, patientInfo[6]);
 
         java.util.Date today = new java.util.Date();
         java.sql.Date timestamp = new java.sql.Date(today.getTime());
 
         statement.setDate(7, timestamp);
+
+        statement.execute();
+    }
+
+    public void editPatient(String[] patientInfo) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.update_patient ?,?,?,?,?,?,?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+        statement.setString(1, patientInfo[0]);
+        statement.setString(2, patientInfo[1]);
+        statement.setString(3, patientInfo[2]);
+        statement.setString(4, patientInfo[3]);
+        statement.setString(5, patientInfo[4]);
+        statement.setString(6, patientInfo[5]);
+        statement.setString(7, patientInfo[6]);
 
         statement.execute();
     }
@@ -226,7 +264,7 @@ public class SQLConnector {
             row[2] = resultSet.getString(2);
             row[3] = resultSet.getString(6);
             row[4] = resultSet.getString(5);
-            row[5] = "Gender placeholder";
+            row[5] = resultSet.getString(8);
             row[6] = "Total placeholder";
             data.add(row);
         }
@@ -260,18 +298,12 @@ public class SQLConnector {
 
     public static void main(String[] args) {
         SQLConnector sqlConnector = new SQLConnector();
-//        List<Object[]> data = new ArrayList<>();
+
 //        try {
-//            data = sqlConnector.getAllPatients();
+//            String[] patientInfo = {"005", "8907134012", "Andreas", "Månsson", "0736423533", "Sturegatan 9D,211 50,Malmö", "Male"};
+//            sqlConnector.editPatient(patientInfo);
 //        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
 //            e.printStackTrace();
-//        }
-//        System.out.println(data.size());
-//        for(int i = 0; i<data.size(); i++) {
-//            Object[] row = data.get(i);
-//            for(int j = 0; j<row.length; j++) {
-//                System.out.println(row[j]);
-//            }
 //        }
     }
 }

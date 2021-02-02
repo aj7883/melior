@@ -38,6 +38,17 @@ public class Controller {
         return allPatients;
     }
 
+    public Object[] getDoctorByEmpNbr(String empNbr) {
+
+        try {
+            Object[] doctorInfo = sqlConnector.getDoctorByEmpNbr(empNbr);
+            return doctorInfo;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<Object[]> getDoctorsBySpecialization(String specialization) {
         List<Object[]> doctorsBySpec = new ArrayList<>();
         try {
@@ -95,6 +106,14 @@ public class Controller {
     public void addPatient(String[] newPatientInfo) {
         try {
             sqlConnector.addPatient(newPatientInfo);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editPatient(String[] patientInfo) {
+        try {
+            sqlConnector.editPatient(patientInfo);
         } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
             e.printStackTrace();
         }

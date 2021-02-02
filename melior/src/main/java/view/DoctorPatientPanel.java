@@ -90,6 +90,9 @@ public class DoctorPatientPanel extends JPanel {
 
         westPanel.add(lblDate);
         westPanel.add(tfDate);
+        java.util.Date today = new java.util.Date();
+        java.sql.Date timestamp = new java.sql.Date(today.getTime());
+        tfDate.setText(timestamp.toString());
         westPanel.add(lblDoctor);
         westPanel.add(tfDoctor);
         westPanel.add(lblDiagnosis);
@@ -129,5 +132,9 @@ public class DoctorPatientPanel extends JPanel {
         lblDiagnosis = new JLabel("Diagnosis");
         lblDrugs = new JLabel("Drugs");
         lblDescription = new JLabel("Description");
+    }
+
+    public void login(String empNbr) {
+        tfDoctor.setText(empNbr);
     }
 }

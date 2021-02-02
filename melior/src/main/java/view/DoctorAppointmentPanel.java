@@ -5,6 +5,8 @@ import controller.Controller;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class DoctorAppointmentPanel extends JPanel {
 
@@ -17,7 +19,7 @@ public class DoctorAppointmentPanel extends JPanel {
     private JTextField tfEmployeeNumber;
 
     private JLabel lblEmployeeNumber, lblEmpty, lblMonday, lblTuesday, lblWednesday, lblThursday, lblFriday,
-                    lblFirst, lblSecond, lblThird, lblFourth;
+                    lblFirst, lblSecond, lblThird, lblFourth, lblEmpName;
 
     private JButton buttonLogin, buttonSaveAvailability;
 
@@ -29,12 +31,16 @@ public class DoctorAppointmentPanel extends JPanel {
 
     private JCheckBox[] checkBoxes;
 
+    private DoctorPanel doctorPanel;
 
-    public DoctorAppointmentPanel(int width, int height, Controller controller) {
+
+    public DoctorAppointmentPanel(int width, int height, Controller controller, DoctorPanel doctorPanel) {
         this.width = width;
         this.height = height;
         this.controller = controller;
+        this.doctorPanel = doctorPanel;
         setupPanel();
+        addListeners();
     }
 
     private void setupPanel() {
@@ -66,6 +72,7 @@ public class DoctorAppointmentPanel extends JPanel {
         northPanel.add(tfEmployeeNumber);
         buttonLogin.setPreferredSize(new Dimension(100, 20));
         northPanel.add(buttonLogin);
+        northPanel.add(lblEmpName);
     }
 
     private void setupCenterPanel() {
@@ -101,6 +108,8 @@ public class DoctorAppointmentPanel extends JPanel {
         for(int i = 15; i<20; i++) {
             centerPanel.add(checkBoxes[i]);
         }
+
+        centerPanel.add(buttonSaveAvailability);
 
 
     }
@@ -152,5 +161,33 @@ public class DoctorAppointmentPanel extends JPanel {
         lblSecond = new JLabel("9:30");
         lblThird = new JLabel("10:00");
         lblFourth = new JLabel("10:30");
+        lblEmpName = new JLabel();
+    }
+    private void addListeners() {
+        ButtonListener buttonListener = new ButtonListener();
+        buttonLogin.addActionListener(buttonListener);
+    }
+
+    public void login() {
+        Object[] empInfo = controller.getDoctorByEmpNbr(tfEmployeeNumber.getText());
+
+        if(empInfo != null) {
+            lblEmpName.setText((String)empInfo[1]);
+            tfEmployeeNumber.setEditable(false);
+            doctorPanel.login((String)empInfo[0]);
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "Employee does not exist, try again");
+        }
+    }
+
+
+
+    private class ButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == buttonLogin) {
+                login();
+            }
+        }
     }
 }

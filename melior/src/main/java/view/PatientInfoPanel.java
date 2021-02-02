@@ -227,7 +227,7 @@ public class PatientInfoPanel extends JPanel {
         tfPhone.setEditable(false);
         tfRegDate = new CustomTextField(width, height);
         tfRegDate.setEditable(false);
-        String[] genderChoices = {"Female", "Male", "Not specified"};
+        String[] genderChoices = {"Female", "Male", "N/A"};
         comboGender = new JComboBox(genderChoices);
         comboGender.setEnabled(false);
     }
@@ -281,6 +281,7 @@ public class PatientInfoPanel extends JPanel {
                 tfCity.setEditable(true);
                 tfPhone.setEditable(true);
                 buttonAdd.setEnabled(true);
+                comboGender.setEnabled(true);
 
                 String medicalNumber;
                 if(currentMedicalNumber < 10) {
@@ -301,6 +302,7 @@ public class PatientInfoPanel extends JPanel {
                 tfFirstName.setText(patientInfo[2]);
                 tfLastName.setText(patientInfo[3]);
                 tfPhone.setText(patientInfo[4]);
+                comboGender.setSelectedItem(patientInfo[7]);
 
                 String[] address = patientInfo[5].split(",");
 
@@ -317,7 +319,7 @@ public class PatientInfoPanel extends JPanel {
     }
 
     private void addPatient() {
-        String[] patientInfo = new String[6];
+        String[] patientInfo = new String[7];
 
         patientInfo[0] = tfMedicalNumber.getText();
         patientInfo[1] = tfPersonNumber.getText();
@@ -325,6 +327,7 @@ public class PatientInfoPanel extends JPanel {
         patientInfo[3] = tfLastName.getText();
         patientInfo[4] = tfPhone.getText();
         patientInfo[5] = tfAddress.getText() + "," + tfZip.getText() + "," + tfCity.getText();
+        patientInfo[6] = (String)comboGender.getSelectedItem();
 
         controller.addPatient(patientInfo);
 
@@ -332,7 +335,7 @@ public class PatientInfoPanel extends JPanel {
         saveCurrentMedicalNumber();
 
         buttonEdit.setEnabled(true);
-        buttonSave.setEnabled(true);
+
 
         tfPersonNumber.setEditable(false);
         tfFirstName.setEditable(false);
@@ -342,6 +345,7 @@ public class PatientInfoPanel extends JPanel {
         tfCity.setEditable(false);
         tfPhone.setEditable(false);
         buttonAdd.setEnabled(false);
+        comboGender.setEnabled(false);
 
         patientPanel.enableSelectionBooking();
     }
@@ -377,6 +381,48 @@ public class PatientInfoPanel extends JPanel {
         return validTextFields;
     }
 
+    private void enableEditing() {
+        buttonSave.setEnabled(true);
+        buttonEdit.setEnabled(false);
+
+        tfFirstName.setEditable(true);
+        tfLastName.setEditable(true);
+        tfPhone.setEditable(true);
+        tfAddress.setEditable(true);
+        tfZip.setEditable(true);
+        tfCity.setEditable(true);
+        comboGender.setEnabled(true);
+    }
+
+    private void saveNewInfo() {
+        String[] patientInfo = new String[7];
+
+        patientInfo[0] = tfMedicalNumber.getText();
+        patientInfo[1] = tfPersonNumber.getText();
+        patientInfo[2] = tfFirstName.getText();
+        patientInfo[3] = tfLastName.getText();
+        patientInfo[4] = tfPhone.getText();
+        patientInfo[5] = tfAddress.getText() + "," + tfZip.getText() + "," + tfCity.getText();
+        patientInfo[6] = (String)comboGender.getSelectedItem();
+
+        controller.editPatient(patientInfo);
+
+        buttonEdit.setEnabled(true);
+        buttonSave.setEnabled(false);
+
+        tfPersonNumber.setEditable(false);
+        tfFirstName.setEditable(false);
+        tfLastName.setEditable(false);
+        tfAddress.setEditable(false);
+        tfZip.setEditable(false);
+        tfCity.setEditable(false);
+        tfPhone.setEditable(false);
+        buttonAdd.setEnabled(false);
+        comboGender.setEnabled(false);
+    }
+
+
+
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == buttonSubmit) {
@@ -388,6 +434,17 @@ public class PatientInfoPanel extends JPanel {
                 }
                 else {
                     addPatient();
+                }
+            }
+            if(e.getSource() == buttonEdit) {
+                enableEditing();
+            }
+            if(e.getSource() == buttonSave) {
+                if(!textFieldsValid()) {
+                    JOptionPane.showMessageDialog(null, "Please fill in marked fields");
+                }
+                else {
+                    saveNewInfo();
                 }
             }
         }

@@ -27,10 +27,14 @@ public class DoctorPanel extends JPanel {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createBevelBorder(1));
 
-        doctorAppointmentPanel = new DoctorAppointmentPanel(width, height, controller);
+        doctorAppointmentPanel = new DoctorAppointmentPanel(width, height, controller, this);
         add(doctorAppointmentPanel, BorderLayout.WEST);
 
         doctorPatientPanel = new DoctorPatientPanel(width, height, controller);
         add(doctorPatientPanel, BorderLayout.EAST);
+    }
+
+    public void login(String empNbr) {
+        doctorPatientPanel.login(empNbr);
     }
 }
