@@ -82,6 +82,121 @@ public class SQLConnector {
             statement.setString(i+1, doctor[i]);
         }
         statement.execute();
+
+        execProcedure = "exec Health_Center.dbo.create_appointment ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(execProcedure);
+
+        preparedStatement.setString(1, doctor[0]);
+
+        for(int i = 1; i<=20; i++) {
+            preparedStatement.setInt(i+1, 0);
+        }
+
+        preparedStatement.execute();
+    }
+
+    public void editAvailability(Object[] availability) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.update_appointment ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+
+        statement.setString(1, (String)availability[0]);
+
+        for(int i = 1; i<availability.length; i++) {
+            statement.setInt(i+1, (int)availability[i]);
+        }
+
+        statement.execute();
+    }
+
+    public Object[] getAvailability(String empNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_appointment ?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+        statement.setString(1, empNbr);
+        ResultSet resultSet = statement.executeQuery();
+
+        Object[] availability = new Object[21];
+
+        resultSet.next();
+
+        for(int i = 0; i<availability.length; i++) {
+            availability[i] = resultSet.getObject(i+1);
+        }
+
+        return availability;
+    }
+
+    public void createBooking(Object[] bookingData) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.new_booking ?,?,?,?,?,?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+
+        statement.setString(1, (String)bookingData[0]);
+        statement.setString(2, (String)bookingData[1]);
+        statement.setDate(3, (java.sql.Date)bookingData[2]);
+        statement.setString(4, (String)bookingData[3]);
+        statement.setString(5, (String)bookingData[4]);
+        statement.setString(6, (String)bookingData[5]);
+
+        statement.execute();
+    }
+
+    public List<Object[]> getBookingsByDoctor(String empNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_doctor_appointment ?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+
+        statement.setString(1, empNbr);
+
+        ResultSet resultSet = statement.executeQuery();
+
+        List<Object[]> data = new ArrayList<>();
+
+        while(resultSet.next()) {
+            Object[] row = new Object[6];
+            row[0] = resultSet.getString(1);
+            row[1] = resultSet.getString(2);
+            row[2] = resultSet.getDate(3);
+            row[3] = resultSet.getString(4);
+            row[4] = resultSet.getString(5);
+            row[5] = resultSet.getString(6);
+            data.add(row);
+        }
+        return data;
+    }
+
+    public List<Object[]> getAllBookings() throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_all_booking";
+
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(execProcedure);
+
+        List<Object[]> bookings = new ArrayList<>();
+
+        while(resultSet.next()) {
+            Object[] row = new Object[5];
+
+            row[0] = resultSet.getString(1);
+            row[1] = resultSet.getDate(3);
+            row[2] = resultSet.getString(2);
+            row[3] = resultSet.getString(5);
+            row[4] = resultSet.getString(6);
+            bookings.add(row);
+        }
+
+        return bookings;
     }
 
     public List<Object[]> getDoctors() throws SQLException, UnknownHostException, ClassNotFoundException {
@@ -207,6 +322,30 @@ public class SQLConnector {
         return patientResult;
     }
 
+    public List<Object[]> getPatientsRelatedToDoctor(String empNbr) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.get_doctor_patient_appointment ?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+        statement.setString(1, empNbr);
+        ResultSet resultSet = statement.executeQuery();
+
+        List<Object[]> patients = new ArrayList<>();
+
+        while(resultSet.next()) {
+            Object[] row = new Object[2];
+
+            row[0] = resultSet.getString(3);
+            row[1] = resultSet.getString(1) + " " + resultSet.getString(2);
+
+            patients.add(row);
+        }
+
+        return patients;
+    }
+
+
     public void addPatient(String[] patientInfo) throws SQLException, UnknownHostException, ClassNotFoundException {
         Connection connection = connect();
 
@@ -257,6 +396,8 @@ public class SQLConnector {
 
         List<Object[]> data = new ArrayList<>();
 
+        execProcedure = "exec Health_Center.dbo.total_price ?";
+
         while(resultSet.next()) {
             Object[] row = new Object[7];
             row[0] = resultSet.getString(1);
@@ -265,11 +406,37 @@ public class SQLConnector {
             row[3] = resultSet.getString(6);
             row[4] = resultSet.getString(5);
             row[5] = resultSet.getString(8);
-            row[6] = "Total placeholder";
+
+            PreparedStatement costStatement = connection.prepareStatement(execProcedure);
+            costStatement.setString(1, resultSet.getString(1));
+            ResultSet costResult = costStatement.executeQuery();
+            costResult.next();
+            row[6] = costResult.getInt(1);
             data.add(row);
         }
 
         return data;
+    }
+
+    public void addMedicalRecord(String[] medicalRecordData) throws SQLException, UnknownHostException, ClassNotFoundException {
+        Connection connection = connect();
+
+        String execProcedure = "exec Health_Center.dbo.new_medical_record ?,?,?,?,?,?";
+
+        PreparedStatement statement = connection.prepareStatement(execProcedure);
+
+        statement.setString(1, medicalRecordData[0]);
+        statement.setString(2, medicalRecordData[1]);
+        statement.setString(3, medicalRecordData[2]);
+        statement.setString(4, medicalRecordData[3]);
+        statement.setString(5, medicalRecordData[4]);
+
+        java.util.Date today = new java.util.Date();
+        java.sql.Date timestamp = new java.sql.Date(today.getTime());
+
+        statement.setDate(6, timestamp);
+
+        statement.execute();
     }
 
     public List<Object[]> getMedicalRecords(String medicalID) throws SQLException, UnknownHostException, ClassNotFoundException {
@@ -289,19 +456,29 @@ public class SQLConnector {
             row[0] = resultSet.getString(2);
             row[1] = resultSet.getString(3);
             row[2] = resultSet.getString(4);
-            row[3] = resultSet.getString(6);
-            row[4] = "Date placeholder";
+            row[3] = resultSet.getString(5);
+            row[4] = resultSet.getDate(6);
+
+            data.add(row);
         }
 
         return data;
     }
 
+
     public static void main(String[] args) {
         SQLConnector sqlConnector = new SQLConnector();
 
 //        try {
-//            String[] patientInfo = {"005", "8907134012", "Andreas", "Månsson", "0736423533", "Sturegatan 9D,211 50,Malmö", "Male"};
-//            sqlConnector.editPatient(patientInfo);
+//            List<Object[]> medicalRecords = sqlConnector.getMedicalRecords("009");
+//
+//            for(int i = 0; i<medicalRecords.size(); i++) {
+//                Object[] row = medicalRecords.get(i);
+//
+//                for(int j = 0; j<row.length; j++) {
+//                    System.out.println(row[j]);
+//                }
+//            }
 //        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
 //            e.printStackTrace();
 //        }

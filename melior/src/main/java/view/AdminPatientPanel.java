@@ -126,6 +126,7 @@ public class AdminPatientPanel extends JPanel {
     }
 
     private void getMedicalRecords(String medicalNumber) {
+        System.out.println(medicalNumber);
         List<Object[]> medicalRecords = controller.getMedicalRecords(medicalNumber);
         updateMedicalRecordsTable(medicalRecords);
     }

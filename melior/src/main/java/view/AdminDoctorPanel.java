@@ -43,7 +43,6 @@ public class AdminDoctorPanel extends JPanel {
         this.height = height;
         this.controller = controller;
         getCurrentEmpNbr();
-        System.out.println(currentEmpNbr);
         setupPanel();
     }
 
@@ -119,7 +118,7 @@ public class AdminDoctorPanel extends JPanel {
         //panelAppointments.setBackground(Color.CYAN);
         panelAppointments.setBorder(BorderFactory.createTitledBorder("Upcoming appointments"));
 
-        String[] columns = {"Date", "Patient", "Doctor"};
+        String[] columns = {"ID", "Date", "Patient", "Doctor", "Time"};
         modelAppointments = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -136,6 +135,7 @@ public class AdminDoctorPanel extends JPanel {
 
         panelAppointments.add(scrollpaneAppointments, BorderLayout.CENTER);
 
+        updateAppointmentTable();
 
     }
 
@@ -333,6 +333,20 @@ public class AdminDoctorPanel extends JPanel {
 
     }
 
+    private void updateAppointmentTable() {
+        List<Object[]> bookings = controller.getAllBookings();
+
+        int rows = modelAppointments.getRowCount();
+
+        while(rows > 0) {
+            modelAppointments.removeRow(0);
+            rows = modelAppointments.getRowCount();
+        }
+
+        for(int i = 0; i<bookings.size(); i++) {
+            modelAppointments.addRow(bookings.get(i));
+        }
+    }
 
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {

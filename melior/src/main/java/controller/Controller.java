@@ -18,16 +18,81 @@ public class Controller {
         mainFrame = new MainFrame(1280, 720, this);
     }
 
-    public List<Object[]> getMedicalRecords(String medicalID) {
-        List<Object[]> medicalRecords = new ArrayList<>();
+    public void createBooking(Object[] bookingInfo) {
         try {
-            medicalRecords = sqlConnector.getMedicalRecords(medicalID);
+            sqlConnector.createBooking(bookingInfo);
         } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return medicalRecords;
     }
 
+    public List<Object[]> getBookingsByDoctor(String empNbr) {
+        try {
+            List<Object[]> bookings = sqlConnector.getBookingsByDoctor(empNbr);
+            return bookings;
+
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Object[]> getAllBookings() {
+        try {
+            List<Object[]> bookings = sqlConnector.getAllBookings();
+            return bookings;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void editAvailability(Object[] availability) {
+        try {
+            sqlConnector.editAvailability(availability);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Object[] getAvailability(String empNbr) {
+        try {
+            Object[] availability = sqlConnector.getAvailability(empNbr);
+            return availability;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void addMedicalRecord(String[] medicalRecordData) {
+        try {
+            sqlConnector.addMedicalRecord(medicalRecordData);
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Object[]> getMedicalRecords(String medicalID) {
+
+        try {
+            List<Object[]> medicalRecords = sqlConnector.getMedicalRecords(medicalID);
+            return medicalRecords;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Object[]> getPatientsRelatedToDoctor(String empNbr) {
+        try {
+            List<Object[]> patients = sqlConnector.getPatientsRelatedToDoctor(empNbr);
+            return patients;
+        } catch(SQLException | UnknownHostException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public List<Object[]> getAllPatients() {
         List<Object[]> allPatients = new ArrayList<>();
         try {

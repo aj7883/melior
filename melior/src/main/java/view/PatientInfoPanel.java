@@ -61,6 +61,10 @@ public class PatientInfoPanel extends JPanel {
         }
     }
 
+    public String getSelectedMedicalNumber() {
+        return tfMedicalNumber.getText();
+    }
+
     private void setupPanel() {
         setPreferredSize(new Dimension(width/4-5, height-5));
         setBorder(BorderFactory.createTitledBorder("Patient Info"));
@@ -283,15 +287,10 @@ public class PatientInfoPanel extends JPanel {
                 buttonAdd.setEnabled(true);
                 comboGender.setEnabled(true);
 
-                String medicalNumber;
-                if(currentMedicalNumber < 10) {
-                    medicalNumber = "00" + currentMedicalNumber;
-                }
-                else if(currentMedicalNumber >= 10 && currentMedicalNumber < 100) {
-                    medicalNumber = "0" + currentMedicalNumber;
-                }
-                else {
-                    medicalNumber = "" + currentMedicalNumber;
+                String medicalNumber = "" + currentMedicalNumber;
+
+                while(medicalNumber.length() < 9) {
+                    medicalNumber = "0" + medicalNumber;
                 }
 
                 tfMedicalNumber.setText(medicalNumber);

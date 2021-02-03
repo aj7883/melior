@@ -3,8 +3,13 @@ package view;
 import controller.Controller;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.util.List;
 
 public class DoctorPatientPanel extends JPanel {
     private int width, height;
@@ -49,6 +54,8 @@ public class DoctorPatientPanel extends JPanel {
 
         add(panelPatientList, BorderLayout.NORTH);
         add(panelMedicalRecord, BorderLayout.SOUTH);
+
+        addButtonListener();
     }
 
     private void setupPanelPatientList() {
@@ -100,6 +107,7 @@ public class DoctorPatientPanel extends JPanel {
         westPanel.add(lblDrugs);
         westPanel.add(tfDrugs);
         westPanel.add(buttonAddMedicalRecord);
+        buttonAddMedicalRecord.setEnabled(false);
 
 
         JPanel eastPanel = new JPanel();
@@ -134,7 +142,76 @@ public class DoctorPatientPanel extends JPanel {
         lblDescription = new JLabel("Description");
     }
 
+    private void addButtonListener() {
+        ButtonListener buttonListener = new ButtonListener();
+        buttonAddMedicalRecord.addActionListener(buttonListener);
+    }
+
     public void login(String empNbr) {
         tfDoctor.setText(empNbr);
+        buttonAddMedicalRecord.setEnabled(true);
+        updatePatientList(empNbr);
+    }
+
+    private void updatePatientList(String empNbr) {
+        List<Object[]> patients = controller.getPatientsRelatedToDoctor(empNbr);
+
+        for(int i = 0; i<patients.size(); i++) {
+            modelPatientList.addRow(patients.get(i));
+        }
+    }
+
+    private void addMedicalRecord() {
+        String[] medicalRecordData = new String[5];
+
+        medicalRecordData[0] = (String)modelPatientList.getValueAt(tablePatientList.getSelectedRow(), 0);
+        medicalRecordData[1] = tfDiagnosis.getText();
+        medicalRecordData[2] = textDescription.getText();
+        medicalRecordData[3] = tfDrugs.getText();
+        medicalRecordData[4] = tfDoctor.getText();
+
+        controller.addMedicalRecord(medicalRecordData);
+    }
+
+    private boolean textFieldsValid() {
+        boolean validTextFields = true;
+
+        if(tfDate.getText().isEmpty()) {
+            validTextFields = false;
+            tfDate.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfDrugs.getText().isEmpty()) {
+            validTextFields = false;
+            tfDrugs.setBorder(new LineBorder(Color.RED));
+        }
+        if(tfDiagnosis.getText().isEmpty()) {
+            validTextFields = false;
+            tfDiagnosis.setBorder(new LineBorder(Color.RED));
+        }
+        if(textDescription.getText().isEmpty()) {
+            validTextFields = false;
+            textDescription.setBorder(new LineBorder(Color.RED));
+        }
+
+        return validTextFields;
+    }
+
+    private class ButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource() == buttonAddMedicalRecord) {
+                if(tablePatientList.getSelectionModel().isSelectionEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please select patient to add record to");
+                }
+                else {
+                    if(!textFieldsValid()) {
+                        JOptionPane.showMessageDialog(null, "Please fill in marked fields");
+                    }
+                    else {
+                        addMedicalRecord();
+                    }
+
+                }
+            }
+        }
     }
 }
